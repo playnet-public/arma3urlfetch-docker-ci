@@ -15,7 +15,8 @@ RUN dpkg --add-architecture i386 && \
         libc6-dev:i386 \
         unzip \
         zip \
-        wget && \
+        wget \
+        git && \
     wget ${OPENSSL_SRC} && \
     tar xzvf openssl-1.1.0f.tar.gz && \
     cd openssl-1.1.0f && \
