@@ -1,0 +1,59 @@
+FROM debian:stretch
+
+ARG OPENSSL_SRC=https://www.openssl.org/source/openssl-1.1.0f.tar.gz
+ARG CURL_SRC=https://github.com/curl/curl/releases/download/curl-7_59_0/curl-7.59.0.zip
+
+WORKDIR /root/
+
+RUN apt-get update && \
+    apt-get install -y -f build-essential \
+    software-properties-common \
+    g++-multilib \
+    gcc-multilib \
+    libc6-dev \
+    unzip \
+    zip \
+    wget \
+    git && \
+    wget ${OPENSSL_SRC} && \
+    tar xzvf openssl-1.1.0f.tar.gz && \
+    cd openssl-1.1.0f && \
+    ./config --prefix=/usr/local/ \
+    -m64 \
+    no-ssl3 \
+    shared && \
+    make && \
+    make install && \
+    cd ../ && \
+    rm -Rf openssl-1.1.0f openssl-1.1.0f.tar.gz && \
+    wget ${CURL_SRC} && \
+    unzip curl-7.59.0.zip && \
+    cd curl-7.59.0 && \
+    CFLAGS=-m64 ./configure --prefix=/usr/local/ \
+    --without-librtmp \
+    --disable-ftp \
+    --disable-file \
+    --disable-ldap \
+    --disable-ldaps \
+    --disable-rtsp \
+    --disable-dict \
+    --disable-telnet \
+    --disable-tftp \
+    --disable-pop3 \
+    --disable-imap \
+    --disable-smb \
+    --disable-smtp \
+    --disable-gopher \
+    --disable-manual \
+    --enable-ipv6 \
+    --disable-pthreads \
+    --enable-crypto-auth \
+    --enable-cookies \
+    --without-zlib \
+    --disable-threaded-resolver \
+    --without-brotli \
+    --with-ssl=/usr/local && \
+    make && \
+    make install && \
+    cd ../ && \
+    rm -Rf curl-7.59.0 curl-7.59.0.zip
